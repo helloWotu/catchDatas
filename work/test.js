@@ -1,8 +1,8 @@
 XLSX = require('xlsx')
-json = require('./edenId')
+json = require('./sheen')
 const PCAPNGParser = require('pcap-ng-parser')
 const pcapNgParser = new PCAPNGParser()
-const myFileStream = require('fs').createReadStream('./sheen20190811001.pcapng')
+const myFileStream = require('fs').createReadStream('./pcapng/sheen20190918.pcapng')
 const ip = '139.196.160.16'
 let ip_filter = rawData => {
   let splitIp = ip.split('.')
@@ -325,10 +325,10 @@ myFileStream
     let rawData = parsedPacket.data
     if (true || ip_filter(rawData)) {
       console.log(rawData.length)
-      if (rawData.length === 1500) {
+      if (rawData.length === 1452) {
         //1500 自己的
         //1492
-        let rest = rawData.slice(37, 1466) // 37 , 1489
+        let rest = rawData.slice(37, 1542) // 37 , 1489
         rest.forEach(a => capData.push(a))
         capData.push(rest)
         let result = matcher(rawData)
@@ -381,12 +381,12 @@ setTimeout(() => {
       var ourlandScrored = 0
       if (found) {
         nicknamed = found['nickname']
-        json.data.map(e => {
-          if (nicknamed.indexOf(e['ID']) != -1) {
+        json.map(e => {
+          if (nicknamed.indexOf(e['nickName']) != -1) {
             //说明找到了
             // console.log('nickName:' + nicknamed)
             // console.log('id' + e['EdenID'])
-            edenIdd = e['EdenID']
+            edenIdd = e['edenID']
           }
         })
       }
@@ -422,7 +422,7 @@ setTimeout(() => {
   })
   console.log('-----------------------------------')
 
-  console.table(rrs)
+  // console.table(rrs)
   console.log(JSON.stringify(rrs))
 
   //写文件操作
