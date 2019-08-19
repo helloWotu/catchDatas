@@ -1,8 +1,8 @@
 XLSX = require('xlsx')
-json = require('./sheen')
+// json = require('./sheen')
 const PCAPNGParser = require('pcap-ng-parser')
 const pcapNgParser = new PCAPNGParser()
-const myFileStream = require('fs').createReadStream('./pcapng/sheen20190918.pcapng')
+const myFileStream = require('fs').createReadStream('./pcapng/arster20190818.pcapng')
 const ip = '139.196.160.16'
 let ip_filter = rawData => {
   let splitIp = ip.split('.')
@@ -54,8 +54,6 @@ let combine = longRaw => {
   let outlandScoreMathcher = 0,
     outlandScore // 外域评分outland_score
 
-  let edenIDMathcher = 0,
-    edenID //外域编号
   longRaw.forEach((c, i, all) => {
     // console.log('我来了~~~~')
     if (newOne) {
@@ -92,20 +90,7 @@ let combine = longRaw => {
     } else {
       outlandScoreMathcher = 0
     }
-    //伊甸id
-    if (c === 'eden_id"'.charCodeAt(edenIDMathcher)) {
-      edenIDMathcher++
-      if ('eden_id"'.length === edenIDMathcher) {
-        edenIDMathcher = 0
-        let start = i + 1
-        let end = findEndPos(all, start)
-        if (end !== -1) {
-          edenID = all.slice(start, end).reduce((a, c) => (a << 8) + c, 0)
-        }
-      }
-    } else {
-      edenIDMathcher = 0
-    }
+   
 
     // var outlandObj = sysData(c,i,all,'outland_score', outlandScoreMathcher)
     // outlandScore = outlandObj.score
@@ -126,7 +111,6 @@ let combine = longRaw => {
         results.push({
           nickname,
           ids,
-          edenID
         })
 
         newOne = true
@@ -161,7 +145,8 @@ let matcher = rawData => {
   let outlandProgressMathcher = 0,
     outlandProgress //外域完成度 outland_progress
   let outlandScore // 外域评分outland_score
-  let edenID //伊甸id eden_id
+  let edenIDMathcher = 0,
+    edenID  //伊甸id eden_id
   let dpMatcher = 0,
     dp
   rawData.forEach((c, i, all) => {
@@ -270,6 +255,20 @@ let matcher = rawData => {
       totalScoreMatcher = 0
     }
 
+    if (c === 'eden_id'.charCodeAt(edenIDMathcher)) {
+      edenIDMathcher++
+      if ('eden_id'.length === edenIDMathcher) {
+        edenIDMathcher = 0
+        let start = i + 1 + 1
+        let end = findEndPos(all, start)
+        if (end !== -1) {
+          edenID = all.slice(start, end).reduce((a, c) => (a << 8) + c, 0)
+        }
+      }
+    } else {
+      edenIDMathcher = 0
+    }
+
     if (c === 'fruit_num'.charCodeAt(fruitMatcher)) {
       fruitMatcher++
       if ('fruit_num'.length === fruitMatcher) {
@@ -376,24 +375,24 @@ setTimeout(() => {
         }
       })
       // console.log(edenids)
-      var nicknamed = '',
-        edenIdd = ''
+      var nicknamed = ''
+        // edenIdd = ''
       var ourlandScrored = 0
       if (found) {
         nicknamed = found['nickname']
-        json.map(e => {
-          if (nicknamed.indexOf(e['nickName']) != -1) {
-            //说明找到了
-            // console.log('nickName:' + nicknamed)
-            // console.log('id' + e['EdenID'])
-            edenIdd = e['edenID']
-          }
-        })
+        // json.map(e => {
+        //   if (nicknamed.indexOf(e['nickName']) != -1) {
+        //     //说明找到了
+        //     // console.log('nickName:' + nicknamed)
+        //     // console.log('id' + e['EdenID'])
+        //     edenIdd = e['edenID']
+        //   }
+        // })
       }
       rrs.push({
         nickname: nicknamed,
         totalScore: r['totalScore'],
-        edenID: edenIdd,
+        edenID: r['edenID'],
         // outlandScore: ourlandScrored,
         mopUp: r['mopUp'],
         fruit: r['fruit'],
@@ -422,8 +421,8 @@ setTimeout(() => {
   })
   console.log('-----------------------------------')
 
-  // console.table(rrs)
-  console.log(JSON.stringify(rrs))
+  console.table(rrs)
+  // console.log(JSON.stringify(rrs))
 
   //写文件操作
   // var json = JSON.stringify(rrs)
