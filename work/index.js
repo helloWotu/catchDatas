@@ -1,8 +1,8 @@
 XLSX = require('xlsx')
-// json = require('./sheen')
+namesJson = require('./jsons/allNames.json')
 const PCAPNGParser = require('pcap-ng-parser')
 const pcapNgParser = new PCAPNGParser()
-const myFileStream = require('fs').createReadStream('./pcapng/arster20190818.pcapng')
+const myFileStream = require('fs').createReadStream('./pcapng/sheen20190901.pcapng')
 const ip = '139.196.160.16'
 let ip_filter = rawData => {
   let splitIp = ip.split('.')
@@ -327,7 +327,7 @@ myFileStream
       if (rawData.length === 1452) {
         //1500 自己的
         //1492
-        let rest = rawData.slice(37, 1542) // 37 , 1489
+        let rest = rawData.slice(37, 1384) // 37 , 1489
         rest.forEach(a => capData.push(a))
         capData.push(rest)
         let result = matcher(rawData)
@@ -375,7 +375,7 @@ setTimeout(() => {
         }
       })
       // console.log(edenids)
-      var nicknamed = ''
+      var nicknamed = '-1'
         // edenIdd = ''
       var ourlandScrored = 0
       if (found) {
@@ -388,6 +388,16 @@ setTimeout(() => {
         //     edenIdd = e['edenID']
         //   }
         // })
+      }
+
+      if (nicknamed == '-1') {
+        namesJson.map(e => {
+          if (r['ids'][0].indexOf(e['id']) !== -1) {
+            //说明找到了
+            console.log('找到了!!!'+ e['nickName'] + e['id'])
+            nicknamed = e['nickName']
+          }
+        })
       }
       rrs.push({
         nickname: nicknamed,
@@ -406,6 +416,7 @@ setTimeout(() => {
     if (r['nickname'] && r['totalScore'] && r['mopUp']) {
       rrs.push(r)
     }
+
   })
   rrs.sort((a, b) => b['totalScore'] - a['totalScore'])
   rrs = rrs.filter((r, i, a) => {
@@ -421,8 +432,8 @@ setTimeout(() => {
   })
   console.log('-----------------------------------')
 
-  console.table(rrs)
-  // console.log(JSON.stringify(rrs))
+  // console.table(rrs)
+  console.log(JSON.stringify(rrs))
 
   //写文件操作
   // var json = JSON.stringify(rrs)
