@@ -3,6 +3,7 @@ namesJson = require('./jsons/allNames.json')
 const PCAPNGParser = require('pcap-ng-parser')
 const pcapNgParser = new PCAPNGParser()
 const myFileStream = require('fs').createReadStream('./pcapng/sheen20190901.pcapng')
+
 const ip = '139.196.160.16'
 let ip_filter = rawData => {
   let splitIp = ip.split('.')
@@ -90,7 +91,6 @@ let combine = longRaw => {
     } else {
       outlandScoreMathcher = 0
     }
-   
 
     // var outlandObj = sysData(c,i,all,'outland_score', outlandScoreMathcher)
     // outlandScore = outlandObj.score
@@ -110,7 +110,7 @@ let combine = longRaw => {
         }
         results.push({
           nickname,
-          ids,
+          ids
         })
 
         newOne = true
@@ -146,7 +146,7 @@ let matcher = rawData => {
     outlandProgress //外域完成度 outland_progress
   let outlandScore // 外域评分outland_score
   let edenIDMathcher = 0,
-    edenID  //伊甸id eden_id
+    edenID //伊甸id eden_id
   let dpMatcher = 0,
     dp
   rawData.forEach((c, i, all) => {
@@ -324,7 +324,7 @@ myFileStream
     let rawData = parsedPacket.data
     if (true || ip_filter(rawData)) {
       console.log(rawData.length)
-      if (rawData.length === 1452) {
+      if (rawData.length === 1384) {
         //1500 自己的
         //1492
         let rest = rawData.slice(37, 1384) // 37 , 1489
@@ -436,90 +436,94 @@ setTimeout(() => {
   console.log(JSON.stringify(rrs))
 
   //写文件操作
-  // var json = JSON.stringify(rrs)
-  // var parejson = JSON.parse(json)
-  // console.log(parejson)
-  // // var title = [
-  // //   '昵称',
-  // //   '总分',
-  // //   '扫荡数',
-  // //   '果实数',
-  // //   'dp',
-  // //   'id',
-  // //   '外域进度',
-  // //   '最高层数',
-  // //   '科技分'
-  // // ]
-  // var title = [
-  //   'nickname',
-  //   'totalScore',
-  //   'mopUp',
-  //   'fruit',
-  //   'dp',
-  //   'id',
-  //   'outlandProgress',
-  //   'maxExplpreLebel',
-  //   'techSocore'
-  // ]
+  var jsonstr = JSON.stringify(rrs)
+  var json = JSON.parse(jsonstr)
+  console.log(json)
+  var need_title = [
+    '昵称',
+    'edenID',
+    '总分',
+    '扫荡数',
+    '果实数',
+    'dp',
+    'id',
+    '外域进度',
+    '最高层数',
+    '科技分'
+  ]
+  var org_datas = [
+    'nickname',
+    'edenID',
+    'totalScore',
+    'mopUp',
+    'fruit',
+    'dp',
+    'id',
+    'outlandProgress',
+    'maxExplpreLebel',
+    'techSocore'
+  ]
 
-  // // var _data = parejson(e => {
-  // //   tmp = {}
-  // //   for (var i = 0; i < title.length; i++) {
-  // //     Object.assign(tmp, {
-  // //       [title[i]]: e[datas[i]]
-  // //     })
-  // //   }
-  // //   return tmp
-  // // })
+  var _data = json.map(e => {
+    tmp = {}
+    for (var i = 0; i < need_title.length; i++) {
+      Object.assign(tmp, {
+        [need_title[i]]: e[org_datas[i]]
+      })
+    }
+    return tmp
+  })
 
-  // var _headers = title
-  // var headers = _headers
-  //   .map((v, i) =>
-  //     Object.assign({}, { v: v, position: String.fromCharCode(65 + i) + 1 })
-  //   )
-  //   .reduce(
-  //     (prev, next) =>
-  //       Object.assign({}, prev, {
-  //         [next.position]: { v: next.v }
-  //       }),
-  //     {}
-  //   )
+  console.log(_data)
 
-  // var data = parejson
-  //   .map((v, i) =>
-  //     _headers.map((k, j) =>
-  //       Object.assign(
-  //         {},
-  //         { v: v[k], position: String.fromCharCode(65 + j) + (i + 2) }
-  //       )
-  //     )
-  //   )
-  //   .reduce((prev, next) => prev.concat(next))
-  //   .reduce(
-  //     (prev, next) =>
-  //       Object.assign({}, prev, {
-  //         [next.position]: { v: next.v }
-  //       }),
-  //     {}
-  //   )
+  var _headers = need_title
+  var headers = _headers
+    .map((v, i) =>
+      Object.assign({}, { v: v, position: String.fromCharCode(65 + i) + 1 })
+    )
+    .reduce(
+      (prev, next) =>
+        Object.assign({}, prev, {
+          [next.position]: { v: next.v }
+        }),
+      {}
+    )
 
-  // // 合并 headers 和 data
-  // var output = Object.assign({}, headers, data)
+  var data = _data
+    .map((v, i) =>
+      _headers.map((k, j) =>
+        Object.assign(
+          {},
+          { v: v[k], position: String.fromCharCode(65 + j) + (i + 2) }
+        )
+      )
+    )
+    .reduce((prev, next) => prev.concat(next))
+    .reduce(
+      (prev, next) =>
+        Object.assign({}, prev, {
+          [next.position]: { v: next.v }
+        }),
+      {}
+    )
 
-  // // 获取所有单元格的位置
-  // var outputPos = Object.keys(output)
+  // 合并 headers 和 data
+  var output = Object.assign({}, headers, data)
 
-  // // 计算出范围
-  // var ref = outputPos[0] + ':' + outputPos[outputPos.length - 1]
+  // 获取所有单元格的位置
+  var outputPos = Object.keys(output)
 
-  // // 构建 workbook 对象
-  // var wb = {
-  //   SheetNames: ['mySheet'],
-  //   Sheets: {
-  //     mySheet: Object.assign({}, output, { '!ref': ref })
-  //   }
-  // }
+  // 计算出范围
+  var ref = outputPos[0] + ':' + outputPos[outputPos.length - 1]
 
-  // // 导出 Excel
-  // XLSX.writeFile(wb, 'output.xlsx')
+  // 构建 workbook 对象
+  var wb = {
+    SheetNames: ['mySheet'],
+    Sheets: {
+      mySheet: Object.assign({}, output, { '!ref': ref })
+    }
+  }
+
+  // 导出 Excel
+  XLSX.writeFile(wb, '20190901.xlsx')
 }, 2000)
