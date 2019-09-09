@@ -2,7 +2,9 @@ XLSX = require('xlsx')
 namesJson = require('./jsons/allNames.json')
 const PCAPNGParser = require('pcap-ng-parser')
 const pcapNgParser = new PCAPNGParser()
-const myFileStream = require('fs').createReadStream('./pcapng/sheen20190901.pcapng')
+const myFileStream = require('fs').createReadStream(
+  './pcapng/ber2_20190909.pcapng'
+)
 
 const ip = '139.196.160.16'
 let ip_filter = rawData => {
@@ -376,7 +378,7 @@ setTimeout(() => {
       })
       // console.log(edenids)
       var nicknamed = '-1'
-        // edenIdd = ''
+      // edenIdd = ''
       var ourlandScrored = 0
       if (found) {
         nicknamed = found['nickname']
@@ -394,7 +396,7 @@ setTimeout(() => {
         namesJson.map(e => {
           if (r['ids'][0].indexOf(e['id']) !== -1) {
             //说明找到了
-            console.log('找到了!!!'+ e['nickName'] + e['id'])
+            console.log('找到了!!!' + e['nickName'] + e['id'])
             nicknamed = e['nickName']
           }
         })
@@ -416,7 +418,6 @@ setTimeout(() => {
     if (r['nickname'] && r['totalScore'] && r['mopUp']) {
       rrs.push(r)
     }
-
   })
   rrs.sort((a, b) => b['totalScore'] - a['totalScore'])
   rrs = rrs.filter((r, i, a) => {
