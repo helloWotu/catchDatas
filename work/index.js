@@ -1,9 +1,10 @@
 XLSX = require('xlsx')
 namesJson = require('./jsons/allNames.json')
+dpsData = require('./jsons/dpsData.json')
 const PCAPNGParser = require('pcap-ng-parser')
 const pcapNgParser = new PCAPNGParser()
 const myFileStream = require('fs').createReadStream(
-  './pcapng/ber2_20190909.pcapng'
+  './pcapng/ast20190901.pcapng'
 )
 
 const ip = '139.196.160.16'
@@ -325,7 +326,7 @@ myFileStream
   .on('data', parsedPacket => {
     let rawData = parsedPacket.data
     if (true || ip_filter(rawData)) {
-      console.log(rawData.length)
+      // console.log(rawData.length)
       if (rawData.length === 1384) {
         //1500 自己的
         //1492
@@ -349,7 +350,7 @@ let rrs = []
 
 setTimeout(() => {
   let ns = combine(capData)
-  console.log(ns)
+  // console.log(ns)
 
   let allNames = ns.reduce((arr, b) => {
     if (arr.indexOf(b['nickname']) === 1) {
@@ -401,12 +402,23 @@ setTimeout(() => {
           }
         })
       }
+      var mopDiffer = -1
+      // dpsData.map(e => {
+      //   console.log(r['edenID'] + '------------------')
+      //   var edenIdString = r['edenID'].toString
+      //   if (edenIdString.indexOf(e['edenID']) !== -1) {
+      //     //说明找到了
+      //     mopDiffer = r['mopUp'] - e['mopUp']
+      //   }
+      // })
+
       rrs.push({
         nickname: nicknamed,
         totalScore: r['totalScore'],
         edenID: r['edenID'],
         // outlandScore: ourlandScrored,
         mopUp: r['mopUp'],
+        mopDiffer: mopDiffer,
         fruit: r['fruit'],
         dp: r['dp'],
         id: r['ids'][0],
@@ -424,7 +436,7 @@ setTimeout(() => {
     return !a.slice(0, i).find(j => r['id'] === j['id'])
   })
   allNames.map(name => {
-    console.log('name---' + name)
+    // console.log('name---' + name)
     if (!rrs.find(r => r['nickname'] === name)) {
       rrs.push({
         nickname: name
@@ -439,12 +451,13 @@ setTimeout(() => {
   //写文件操作
   var jsonstr = JSON.stringify(rrs)
   var json = JSON.parse(jsonstr)
-  console.log(json)
+  // console.log(json)
   var need_title = [
     '昵称',
     'edenID',
     '总分',
     '扫荡数',
+    '扫荡差',
     '果实数',
     'dp',
     'id',
@@ -457,6 +470,7 @@ setTimeout(() => {
     'edenID',
     'totalScore',
     'mopUp',
+    'mopDiffer',
     'fruit',
     'dp',
     'id',
@@ -475,7 +489,7 @@ setTimeout(() => {
     return tmp
   })
 
-  console.log(_data)
+  // console.log(_data)
 
   var _headers = need_title
   var headers = _headers
