@@ -403,14 +403,13 @@ setTimeout(() => {
         })
       }
       var mopDiffer = -1
-      // dpsData.map(e => {
-      //   console.log(r['edenID'] + '------------------')
-      //   var edenIdString = r['edenID'].toString
-      //   if (edenIdString.indexOf(e['edenID']) !== -1) {
-      //     //说明找到了
-      //     mopDiffer = r['mopUp'] - e['mopUp']
-      //   }
-      // })
+      dpsData.map(e => {
+        console.log(r['edenID'] + '------------------')
+        if (r['edenID'] == e['edenID']) {
+          //说明找到了
+          mopDiffer = r['mopUp'] - e['mopUp']
+        }
+      })
 
       rrs.push({
         nickname: nicknamed,
@@ -509,7 +508,10 @@ setTimeout(() => {
       _headers.map((k, j) =>
         Object.assign(
           {},
-          { v: v[k], position: String.fromCharCode(65 + j) + (i + 2) }
+          {
+            v: v[k],
+            position: String.fromCharCode(65 + j) + (i + 2)
+          }
         )
       )
     )
