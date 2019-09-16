@@ -4,7 +4,7 @@ dpsData = require('./jsons/dpsData.json')
 const PCAPNGParser = require('pcap-ng-parser')
 const pcapNgParser = new PCAPNGParser()
 const myFileStream = require('fs').createReadStream(
-  './pcapng/aster20190916.pcapng'
+  './pcapng/sheen20190916.pcapng'
 )
 
 const ip = '139.196.160.16'
@@ -327,7 +327,7 @@ myFileStream
     let rawData = parsedPacket.data
     if (true || ip_filter(rawData)) {
       // console.log(rawData.length)
-      if (rawData.length === 1384) {
+      if (rawData.length > 1384) {
         //1500 自己的
         //1492
         let rest = rawData.slice(37, 1384) // 37 , 1489
@@ -393,21 +393,25 @@ setTimeout(() => {
         // })
       }
 
-      if (nicknamed == '-1') {
-        namesJson.map(e => {
-          if (r['ids'][0].indexOf(e['id']) !== -1) {
-            //说明找到了
-            console.log('找到了!!!' + e['nickName'] + e['id'])
-            nicknamed = e['nickName']
-          }
-        })
-      }
+      // if (nicknamed == '-1') {
+      //   namesJson.map(e => {
+      //     if (r['ids'][0].indexOf(e['id']) !== -1) {
+      //       //说明找到了
+      //       console.log('找到了!!!' + e['nickName'] + e['id'])
+      //       nicknamed = e['nickName']
+      //     }
+      //   })
+      // }
       var mopDiffer = -1
       dpsData.map(e => {
-        console.log(r['edenID'] + '------------------')
+        // console.log(r['edenID'] + '------------------')
         if (r['edenID'] == e['edenID']) {
           //说明找到了
           mopDiffer = r['mopUp'] - e['mopUp']
+          if (nicknamed == '-1') {
+            console.log('找到了!!!' + e['nickName'] + e['edenID'])
+            nicknamed = e['nickName']
+          }
         }
       })
 
@@ -445,7 +449,7 @@ setTimeout(() => {
   console.log('-----------------------------------')
 
   // console.table(rrs)
-  console.log(JSON.stringify(rrs))
+  // console.log(JSON.stringify(rrs))
 
   //写文件操作
   var jsonstr = JSON.stringify(rrs)
