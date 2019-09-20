@@ -4,7 +4,7 @@ dpsData = require('./jsons/dpsData.json')
 const PCAPNGParser = require('pcap-ng-parser')
 const pcapNgParser = new PCAPNGParser()
 const myFileStream = require('fs').createReadStream(
-  './pcapng/sheen20190916.pcapng'
+  './pcapng/ber2_20190917.pcapng'
 )
 
 const ip = '139.196.160.16'
@@ -327,7 +327,7 @@ myFileStream
     let rawData = parsedPacket.data
     if (true || ip_filter(rawData)) {
       // console.log(rawData.length)
-      if (rawData.length > 1384) {
+      if (rawData.length > 500) {
         //1500 自己的
         //1492
         let rest = rawData.slice(37, 1384) // 37 , 1489
@@ -377,31 +377,7 @@ setTimeout(() => {
           }
         }
       })
-      // console.log(edenids)
       var nicknamed = '-1'
-      // edenIdd = ''
-      var ourlandScrored = 0
-      if (found) {
-        nicknamed = found['nickname']
-        // json.map(e => {
-        //   if (nicknamed.indexOf(e['nickName']) != -1) {
-        //     //说明找到了
-        //     // console.log('nickName:' + nicknamed)
-        //     // console.log('id' + e['EdenID'])
-        //     edenIdd = e['edenID']
-        //   }
-        // })
-      }
-
-      // if (nicknamed == '-1') {
-      //   namesJson.map(e => {
-      //     if (r['ids'][0].indexOf(e['id']) !== -1) {
-      //       //说明找到了
-      //       console.log('找到了!!!' + e['nickName'] + e['id'])
-      //       nicknamed = e['nickName']
-      //     }
-      //   })
-      // }
       var mopDiffer = -1
       dpsData.map(e => {
         // console.log(r['edenID'] + '------------------')
@@ -414,6 +390,11 @@ setTimeout(() => {
           }
         }
       })
+
+      if (found && nicknamed == '-1') {
+        console.log('数据包名字' + found['nickname'])
+        nicknamed = found['nickname']
+      }
 
       rrs.push({
         nickname: nicknamed,
