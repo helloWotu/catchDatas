@@ -4,7 +4,7 @@ dpsData = require('./jsons/dpsData.json')
 const PCAPNGParser = require('pcap-ng-parser')
 const pcapNgParser = new PCAPNGParser()
 const myFileStream = require('fs').createReadStream(
-  './pcapng/ber2_20190917.pcapng'
+  './pcapng/Aster20190922.pcapng'
 )
 
 const ip = '139.196.160.16'
