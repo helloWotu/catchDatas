@@ -4,7 +4,7 @@ dpsData = require('./jsons/dpsData.json')
 const PCAPNGParser = require('pcap-ng-parser')
 const pcapNgParser = new PCAPNGParser()
 const myFileStream = require('fs').createReadStream(
-  './pcapng/ber2_20191012.pcapng'
+  './pcapng/ber2_20191013.pcapng'
 )
 
 const ip = '139.196.160.16'
@@ -437,10 +437,10 @@ setTimeout(() => {
   var json = JSON.parse(jsonstr)
   // console.log(json)
   var need_title = [
-    '昵称',
+    'nickName',
     'edenID',
     '总分',
-    '扫荡数',
+    'mopUp',
     '扫荡差',
     '果实数',
     'dp',
